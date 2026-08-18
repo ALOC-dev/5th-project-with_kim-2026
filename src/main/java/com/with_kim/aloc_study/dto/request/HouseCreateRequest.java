@@ -6,6 +6,9 @@ import java.util.List;
 
 public record HouseCreateRequest(
         Long buildingId,
+        String address,
+        Double latitude,
+        Double longitude,
         Long price,
         Long deposit,
         Long monthlyRent,

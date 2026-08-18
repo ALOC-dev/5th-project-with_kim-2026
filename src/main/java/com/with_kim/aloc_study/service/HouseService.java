@@ -31,11 +31,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class HouseService {
+
+    private static final String DONGDAEMUNGU_NAME = "동대문구";
+    private static final String DONGDAEMUNGU_CODE = "11230";
+    private static final Map<String, String> CODES = Map.of(
+            "회기동", "1123010100",
+            "전농동", "1123010400",
+            "휘경동", "1123010900"
+    );
 
     private final HouseRepository houseRepository;
     private final BuildingRepository buildingRepository;
@@ -182,8 +191,7 @@ public class HouseService {
         Users user = findUser(userId);
         validateAgent(user);
 
-        Building building = buildingRepository.findById(request.buildingId())
-                .orElseThrow(() -> new ResourceNotFoundException("건물을 찾을 수 없습니다. id=" + request.buildingId()));
+        Building building = resolveBuilding(request);
 
         House house = House.create(
                 building,
@@ -207,6 +215,60 @@ public class HouseService {
         House savedHouse = houseRepository.save(house);
 
         return HouseResponse.from(savedHouse);
+    }
+
+    private Building resolveBuilding(HouseCreateRequest request) {
+        if(request.buildingId() != null && request.buildingId() != 0) {
+            return buildingRepository.findById(request.buildingId())
+                    .orElseThrow(() -> new ResourceNotFoundException("건물을 찾을 수 없습니다. id=" + request.buildingId()));
+        }
+
+        validateNewBuildingRequest(request);
+        String emdName = parseSupportedEmdName(request.address());
+
+        return buildingRepository.findByAddress(request.address())
+                .orElseGet(() -> buildingRepository.save(Building.of(
+                        request.address(),
+                        null,
+                        request.latitude(),
+                        request.longitude(),
+                        null,
+                        DONGDAEMUNGU_CODE,
+                        DONGDAEMUNGU_NAME,
+                        CODES.get(emdName),
+                        emdName,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                )));
+    }
+
+    private void validateNewBuildingRequest(HouseCreateRequest request) {
+        if(request.address() == null || request.address().isBlank()) {
+            throw new InvalidRequestException("buildingId가 0이면 건물 주소는 필수입니다.");
+        }
+
+        if(request.latitude() == null || request.longitude() == null) {
+            throw new InvalidRequestException("buildingId가 0이면 건물 위도와 경도는 필수입니다.");
+        }
+    }
+
+    private String parseSupportedEmdName(String address) {
+        if(!address.contains(DONGDAEMUNGU_NAME)) {
+            throw new InvalidRequestException("현재는 동대문구 매물만 등록할 수 있습니다.");
+        }
+
+        return CODES.keySet()
+                .stream()
+                .filter(address::contains)
+                .findFirst()
+                .orElseThrow(() -> new InvalidRequestException("현재는 전농동, 휘경동, 회기동 매물만 등록할 수 있습니다."));
     }
 
     // 내가 등록한 매물 수정
