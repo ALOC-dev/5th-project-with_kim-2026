@@ -40,6 +40,8 @@ public class SecurityConfig {
                                 .requestMatchers("/api/auth/**").permitAll()
                                 .requestMatchers("/", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**").permitAll()
                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/houses/embeddings/rebuild").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/houses/search").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/houses/my").hasAnyRole("AGENT", "ADMIN")
                                 .requestMatchers(HttpMethod.GET, "/api/houses/**", "/api/school-buildings/**", "/api/infrastructures/**").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/houses").hasAnyRole("AGENT", "ADMIN")
