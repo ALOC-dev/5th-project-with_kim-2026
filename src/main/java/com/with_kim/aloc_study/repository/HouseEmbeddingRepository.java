@@ -52,6 +52,22 @@ public class HouseEmbeddingRepository {
             sql.append(" AND h.price <= :pmax");
             params.put("pmax", f.priceMax());
         }
+        if (f.depositMin() != null) {
+            sql.append(" AND h.deposit >= :dmin");
+            params.put("dmin", f.depositMin());
+        }
+        if (f.depositMax() != null) {
+            sql.append(" AND h.deposit <= :dmax");
+            params.put("dmax", f.depositMax());
+        }
+        if (f.monthlyRentMin() != null) {
+            sql.append(" AND h.monthly_rent >= :mrmin");
+            params.put("mrmin", f.monthlyRentMin());
+        }
+        if (f.monthlyRentMax() != null) {
+            sql.append(" AND h.monthly_rent <= :mrmax");
+            params.put("mrmax", f.monthlyRentMax());
+        }
         if (f.roomNumber() != null) {
             sql.append(" AND h.room_number = :rn");
             params.put("rn", f.roomNumber());

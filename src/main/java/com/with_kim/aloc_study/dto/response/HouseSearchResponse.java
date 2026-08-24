@@ -5,7 +5,7 @@ import com.with_kim.aloc_study.entity.Building;
 import com.with_kim.aloc_study.entity.House;
 
 public record HouseSearchResponse(
-        Long id, String contractType, Long price,Long managementFee,
+        Long id, String contractType, Long price,Long deposit, Long monthlyRent,Long managementFee,
         Integer roomNumber, Integer floor, Double area, String direction,
         String address,Double latitude, Double longitude, Integer constructionYear,Integer campusDistanceMeters,
         Integer campusWalkMinutes,String nearestSubwayName, Integer subwayDistanceMeters, String description
@@ -16,6 +16,8 @@ public record HouseSearchResponse(
                 h.getId(),
                 h.getContractType()!=null ? h.getContractType().name():null,
                 h.getPrice(),
+                h.getDeposit(),
+                h.getMonthlyRent(),
                 h.getManagementFee(),
                 h.getRoomNumber(),
                 h.getFloor(),

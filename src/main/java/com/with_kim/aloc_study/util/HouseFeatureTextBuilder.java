@@ -25,24 +25,28 @@ public class HouseFeatureTextBuilder {
         //계약유형, 가격
         if (h.getContractType() != null) {
             switch (h.getContractType()) {
-                case MONTHLY -> parts.add("월세");
-                case JEONSE -> parts.add("전세");
-                case SALE -> parts.add("매매");
-            }
-            if (h.getPrice() != null) {
-                long m = manwon(h.getPrice());
-                switch (h.getContractType()) {
-                    case MONTHLY -> {
+                case MONTHLY -> {
+                    if (h.getMonthlyRent() != null) {
+                        long m = manwon(h.getMonthlyRent());
                         if (m <= 50) parts.add("저렴한 월세 가성비");
                         else if (m >= 90) parts.add("비싼 고급");
                     }
-                    case JEONSE -> {
-                        if (m <= 30000) parts.add("저렴한 전세 가성비");      // 3억 이하
-                        else if (m >= 80000) parts.add("비싼 고급");           // 8억 이상
+                    if (h.getDeposit() != null && manwon(h.getDeposit()) <= 500) {
+                        parts.add("보증금 부담 적은");
                     }
-                    case SALE -> {
-                        if (m <= 50000) parts.add("저렴한 가성비");            // 5억 이하
-                        else if (m >= 120000) parts.add("비싼 고급 프리미엄");  // 12억 이상
+                }
+                case JEONSE -> {
+                    if (h.getDeposit() != null) {
+                        long m = manwon(h.getDeposit());
+                        if (m <= 30000) parts.add("저렴한 전세 가성비");
+                        else if (m >= 80000) parts.add("비싼 고급");
+                    }
+                }
+                case SALE -> {
+                    if (h.getPrice() != null) {
+                        long m = manwon(h.getPrice());
+                        if (m <= 50000) parts.add("저렴한 가성비");
+                        else if (m >= 120000) parts.add("비싼 고급 프리미엄");
                     }
                 }
             }

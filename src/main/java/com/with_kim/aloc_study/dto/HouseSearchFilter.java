@@ -4,8 +4,12 @@ import com.with_kim.aloc_study.entity.House;
 
 public record HouseSearchFilter(
         House.ContractType contractType,
-        Long priceMin,
+        Long priceMin,          // 매매가 전용
         Long priceMax,
+        Long depositMin,        // 보증금
+        Long depositMax,
+        Long monthlyRentMin,    // 월세
+        Long monthlyRentMax,
         Integer roomNumber,
         Boolean excludeBanjiha,
         Integer floorMin,
@@ -16,11 +20,11 @@ public record HouseSearchFilter(
         String emdName,
         Integer campusMaxMinutes,
         Integer campusMaxMeters,
-        String semanticQuery//필터로 커버가 불가능한 것->임베딩으로
+        String semanticQuery
 ) {
-    //파싱이 실패할 경우 필터 없이 전부 임베딩으로 진행
     public static HouseSearchFilter fallback(String originalQuery){
-        return new HouseSearchFilter(null, null, null, null, null, null,
-                null, null, null, null, null,null, null, originalQuery);
+        return new HouseSearchFilter(null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null,
+                originalQuery);
     }
 }
